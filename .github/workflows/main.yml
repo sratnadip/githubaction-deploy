@@ -21,11 +21,13 @@ jobs:
       - name: SSH into Bastion Host and Private EC2
         run: |
           # SSH into the Bastion Host
-          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }}  << EOF
+          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} << EOF
             # SSH into the Private EC2 instance from the Bastion Host
             ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
-            # Deploy your application or clone a repository on the Private EC2 instance
+              # Deploy your application or clone a repository on the Private EC2 instance
+              sudo mkdir -p /var/www/html
+              sudo chown ubuntu:ubuntu /var/www/html
               cd /var/www/html
-              git clone https://github.com/sratnadip/githubaction-deploy.git
-          INNER_EOF
+              sudo git clone https://github.com/sratnadip/githubaction-deploy.git
+            INNER_EOF
           EOF
