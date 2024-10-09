@@ -1,4 +1,4 @@
-name: Deploy Web App to EC2
+name: Deploy Web App to EC2 (via Bastion)
 
 on:
   workflow_dispatch:
@@ -7,17 +7,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up SSH agent and add the private key
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # Step 3: Deploy files using SCP to the private server
-      - name: Copy files to EC2
+      - name: SSH to private instance via Bastion Host
         run: |
-          scp -o StrictHostKeyChecking=no -r ./path/to/index.html ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/var/www/html/
+          ssh -o StrictHostKeyChecking=no -A ${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} << EOF
+            ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'INNER_EOF'
+              cd /var/www/html
+              git clone https://github.com/yourusername/your-repo.git
+              sudo systemctl restart nginx
+            INNER_EOF
+          EOF
