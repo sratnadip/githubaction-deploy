@@ -19,20 +19,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # Step 4: SSH into the EC2 instance and clone the Git repository
-      - name: SSH into EC2 and clone repo
+      # Step 3: Deploy files using SCP to the private server
+      - name: Copy files to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
-            # Navigate to the directory where you want to clone the repository
-            cd /var/www/html
-
-            # Clone the Git repository
-            git clone https://github.com/sratnadip/githubaction-deploy.git
-
-            # (Optional) If you need to pull the latest changes from the repo
-            cd your-repo
-            git pull origin main
-
-            # Restart NGINX if necessary or any other application
-            sudo systemctl restart nginx
-          EOF
+          scp -o StrictHostKeyChecking=no -r ./path/to/index.html ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/var/www/html/
