@@ -25,11 +25,9 @@ jobs:
             # SSH into the Private EC2 instance from the Bastion Host
             ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
             
-              #!/bin/bash
-
-              # Define variables
+            
               REPO_URL="https://github.com/sratnadip/githubaction-deploy.git"  # Replace with your repository URL
-              DEST_DIR="/home/ubuntu/githubaction-deploy"  # Replace with your destination directory
+              DEST_DIR="/home/ubuntu/"  # Replace with your destination directory
               
               # Check if the destination directory exists
               if [ -d "$DEST_DIR/.git" ]; then
