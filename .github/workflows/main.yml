@@ -29,7 +29,8 @@ jobs:
               sudo chown ubuntu:ubuntu /var/www/html
 
               # Copy the index.html file to the web directory
-              sudo cp ~/path/to/your/index.html /var/www/html/
+              # Use the correct path for the checked-out repository
+              sudo cp /home/ubuntu/githubaction-deploy/index.html /var/www/html/
               
               # Optional: Restart web server if needed
               # sudo systemctl restart apache2   # Uncomment if using Apache
