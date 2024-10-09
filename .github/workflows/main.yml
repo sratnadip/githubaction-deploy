@@ -2,7 +2,6 @@ name: Deploy Web App to EC2 (via Bastion)
 
 on:
   workflow_dispatch:
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,7 +17,9 @@ jobs:
       - name: SSH to private instance via Bastion Host
         run: |
           ssh -o StrictHostKeyChecking=no -A ${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} << EOF
+            # Now you're on the bastion host, SSH into the private instance
             ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'INNER_EOF'
+              # Commands to run on the private EC2 instance
               cd /var/www/html
               git clone https://github.com/yourusername/your-repo.git
               sudo systemctl restart nginx
