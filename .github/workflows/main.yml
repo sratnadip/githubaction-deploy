@@ -21,9 +21,9 @@ jobs:
       - name: SSH into Bastion Host and Private EC2
         run: |
           # SSH into the Bastion Host
-          ssh -A -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} << EOF
+          ssh -A -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }}
             # SSH into the Private EC2 instance from the Bastion Host
-            ssh -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
+            ssh -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }}
               # Deploy your application or clone a repository on the Private EC2 instance
               if [ -d "/var/www/html/githubaction-deploy" ]; then
                 echo "Repository already exists. Pulling latest changes..."
@@ -35,6 +35,3 @@ jobs:
                 sudo chown ubuntu:ubuntu /var/www/html
                 cd /var/www/html
                 sudo git clone https://github.com/sratnadip/githubaction-deploy.git
-              fi
-            INNER_EOF
-          EOF
