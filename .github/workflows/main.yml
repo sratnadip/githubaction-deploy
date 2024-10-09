@@ -21,7 +21,8 @@ jobs:
       - name: SSH into Bastion Host and Private EC2
         run: |
           # SSH into the Bastion Host
-          ssh -A -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }}
+          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }}  << EOF
             # SSH into the Private EC2 instance from the Bastion Host
-            ssh -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} 
-             
+            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
+          INNER_EOF
+          EOF
