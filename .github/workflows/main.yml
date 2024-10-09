@@ -1,7 +1,7 @@
 name: Deploy Web App to EC2 (via Bastion Host)
 
 on:
- workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -20,14 +20,13 @@ jobs:
       # Step 3: SSH into Bastion Host and then SSH into Private Instance
       - name: SSH into Bastion Host and Private EC2
         run: |
-          # SSH into the Bastion Host and then into the Private EC2
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@{{ secrets.SSH_HOST_BASTION }}
-          #ssh -A -o StrictHostKeyChecking=no ${{ secrets.BASTION_USER }}@${{ secrets.SSH_HOST_BASTION }} << EOF
+          # SSH into the Bastion Host
+          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} << EOF
             # SSH into the Private EC2 instance from the Bastion Host
-            #ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.PRIVATE_HOST }} << 'INNER_EOF'
+           # ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.PRIVATE_HOST }} << 'INNER_EOF'
               # Deploy your application or clone a repository on the Private EC2 instance
-              #cd /var/www/html
-              #git clone https://github.com/sratnadip/githubaction-deploy.git
-              #sudo systemctl restart nginx
-            #INNER_EOF
-         # EOF
+             # cd /var/www/html
+            #  git clone https://github.com/sratnadip/githubaction-deploy.git
+             # sudo systemctl restart nginx
+           INNER_EOF
+          EOF
