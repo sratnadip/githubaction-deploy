@@ -24,16 +24,11 @@ jobs:
           ssh -A -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} << 'EOF'
             # SSH into the Private EC2 instance from the Bastion Host
             ssh -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
-              # Ensure the web directory exists and has the correct ownership
-              sudo mkdir -p /var/www/html
-              sudo chown ubuntu:ubuntu /var/www/html
+              # Navigate to the web directory
+              cd /var/www/html
 
-              # Copy the index.html file to the web directory
-              # Use the correct path for the checked-out repository
-              sudo cp /home/ubuntu/githubaction-deploy/index.html /var/www/html/
-              
-              # Optional: Restart web server if needed
-              # sudo systemctl restart apache2   # Uncomment if using Apache
-              # sudo systemctl restart nginx      # Uncomment if using Nginx
+              # Pull the latest changes from the repository
+              # Make sure you have the correct remote setup in your repository on the instance
+              git pull origin main  # Change 'main' if your default branch is different
             INNER_EOF
           EOF
