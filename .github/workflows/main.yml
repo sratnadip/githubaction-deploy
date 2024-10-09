@@ -27,8 +27,13 @@ jobs:
               # Navigate to the web directory
               cd /var/www/html
 
+              # Check if the directory is a git repository; if not, initialize it
+              if [ ! -d .git ]; then
+                git init
+                git remote add origin https://github.com/sratnadip/githubaction-deploy.git
+              fi
+
               # Pull the latest changes from the repository
-              # Make sure you have the correct remote setup in your repository on the instance
               git pull origin main  # Change 'main' if your default branch is different
             INNER_EOF
           EOF
