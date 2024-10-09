@@ -21,24 +21,15 @@ jobs:
       - name: SSH into Bastion Host and Private EC2
         run: |
           # SSH into the Bastion Host
-          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} << 'EOF'
+          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} 
             # SSH into the Private EC2 instance from the Bastion Host
-            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
+            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} 
             
-            
-              REPO_URL="https://github.com/sratnadip/githubaction-deploy.git"  # Replace with your repository URL
-              DEST_DIR="/home/ubuntu/"  # Replace with your destination directory
-              
-              # Check if the destination directory exists
-              if [ -d "$DEST_DIR/.git" ]; then
-                  echo "Removing existing repository in $DEST_DIR..."
-                  rm -rf "$DEST_DIR"
-              fi
-              
-              # Clone the repository
-              echo "Cloning repository from $REPO_URL to $DEST_DIR..."
-              git clone "$REPO_URL" "$DEST_DIR"
-              
-              echo "Repository cloned successfully."
-            INNER_EOF
-          EOF
+       #step 4:     
+      - name: pull repo
+        run:
+          #pull git repo
+            cd /home/ubuntu 
+            git pull origin main
+          
+         
