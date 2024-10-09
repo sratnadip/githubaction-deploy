@@ -21,9 +21,9 @@ jobs:
       - name: SSH into Bastion Host and Private EC2
         run: |
           # SSH into the Bastion Host
-          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} 
+          ssh -A -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} << 'EOF'
             # SSH into the Private EC2 instance from the Bastion Host
-            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} 
+            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
             
               #!/bin/bash
 
@@ -42,5 +42,5 @@ jobs:
               git clone "$REPO_URL" "$DEST_DIR"
               
               echo "Repository cloned successfully."
-            
-
+            INNER_EOF
+          EOF
