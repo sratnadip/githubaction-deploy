@@ -1,23 +1,39 @@
-name: SSH to EC2
+name: Deploy Web App to EC2 (via Bastion Host)
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup SSH agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+      # Step 2: Set up SSH agent and add the private key
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: SSH into EC2 instance
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful!'"
+      # Step 3: SSH into Bastion Host and then SSH into Private Instance
+      - name: SSH into Bastion Host and Private EC2
+        run: |
+          # SSH into the Bastion Host
+          ssh -A -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST_BASTION }} << 'EOF'
+            # SSH into the Private EC2 instance from the Bastion Host
+            ssh -t -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} << 'INNER_EOF'
+              # Navigate to the web directory
+              cd /var/www/html
+
+              # Check if the directory is a git repository; if not, initialize it
+              if [ ! -d .git ]; then
+                git init
+                git remote add origin https://github.com/sratnadip/githubaction-deploy.git
+              fi
+
+              # Pull the latest changes from the repository
+              git pull origin main  # Change 'main' if your default branch is different
+            INNER_EOF
+          EOF
