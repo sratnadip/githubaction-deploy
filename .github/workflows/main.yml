@@ -25,11 +25,20 @@ jobs:
             # SSH into the Private EC2 instance from the Bastion Host
             ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_HOST }} 
             
-       #step 4:     
-      - name: pull repo
-        run:
-          #pull git repo
-            cd /home/ubuntu 
-            git pull origin main
+      - name: Pull repository from GitHub
+        run: |
+          # Define variables
+          REPO_URL="https://github.com/sratnadip/githubaction-deploy.git"  # Replace with your repository URL
+          DEST_DIR="/home/ubuntu"  # Replace with your desired destination path
+
+          # Check if the directory exists
+          if [ -d "$DEST_DIR/.git" ]; then
+              echo "Repository already exists in $DEST_DIR. Pulling the latest changes..."
+              cd "$DEST_DIR"
+              git pull origin main  # Pull the latest changes
+          else
+              echo "Cloning the repository to $DEST_DIR..."
+              git clone "$REPO_URL" "$DEST_DIR"
+          fi
           
          
